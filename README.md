@@ -8,5 +8,5 @@
 ## Installation
 
 ```
-Install-Package Soenneker.Blob.Fetch
+dotnet add package Soenneker.Blob.Fetch
 ```
