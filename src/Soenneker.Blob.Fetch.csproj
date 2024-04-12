@@ -39,7 +39,7 @@
 
         
 
-        <PackageReference Include="Soenneker.Blob.Container" Version="2.1.362" />
+        <PackageReference Include="Soenneker.Blob.Container" Version="2.1.364" />
 
         <PackageReference Include="Soenneker.Utils.Cancellation" Version="2.1.184" />
     </ItemGroup>
