@@ -6,6 +6,7 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Logging;
 using Soenneker.Blob.Container.Abstract;
 using Soenneker.Blob.Fetch.Abstract;
+using Soenneker.Extensions.ValueTask;
 using Soenneker.Utils.Cancellation.Abstract;
 
 namespace Soenneker.Blob.Fetch;
@@ -24,17 +25,18 @@ public class BlobFetchUtil : IBlobFetchUtil
         _cancellationUtil = cancellationUtil;
     }
         
-    public async ValueTask<List<BlobItem>> GetAllBlobItems(string blobContainer, string? prefix = null)
+    public async ValueTask<List<BlobItem>> GetAllBlobItems(string blobContainer, string? prefix = null, CancellationToken cancellationToken = default)
     {
         _logger.LogDebug("Getting all blob items from container {container} with prefix {prefix}", blobContainer, prefix);
 
-        BlobContainerClient container = await _blobContainerUtil.GetClient(blobContainer);
+        BlobContainerClient container = await _blobContainerUtil.Get(blobContainer).NoSync();
+
+        if (cancellationToken == CancellationToken.None)
+            cancellationToken = _cancellationUtil.Get();
 
         var blobItems = new List<BlobItem>();
 
-        CancellationToken cancellationToken = _cancellationUtil.Get();
-
-        await foreach (BlobItem blobItem in container.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken))
+        await foreach (BlobItem blobItem in container.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken).ConfigureAwait(false))
         {
             blobItems.Add(blobItem);
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
 
@@ -16,5 +17,5 @@ public interface IBlobFetchUtil
     /// Typically Scoped IoC
     /// </summary>
     [Pure]
-    ValueTask<List<BlobItem>> GetAllBlobItems(string blobContainer, string? prefix = null);
+    ValueTask<List<BlobItem>> GetAllBlobItems(string blobContainer, string? prefix = null, CancellationToken cancellationToken = default);
 }

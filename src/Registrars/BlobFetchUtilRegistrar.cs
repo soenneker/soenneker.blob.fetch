@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Soenneker.Blob.Container.Registrars;
 using Soenneker.Blob.Fetch.Abstract;
+using Soenneker.Utils.Cancellation.Registrars;
 
 namespace Soenneker.Blob.Fetch.Registrars;
 
@@ -9,16 +11,10 @@ namespace Soenneker.Blob.Fetch.Registrars;
 /// </summary>
 public static class BlobFetchUtilRegistrar
 {
-    public static void AddBlobFetchUtilAsSingleton(this IServiceCollection services)
-    {
-        services.TryAddSingleton<IBlobFetchUtil, BlobFetchUtil>();
-    }
-
-    /// <summary>
-    /// Recommended
-    /// </summary>
     public static void AddBlobFetchUtilAsScoped(this IServiceCollection services)
     {
+        services.AddBlobContainerUtilAsSingleton();
+        services.AddCancellationUtil();
         services.TryAddScoped<IBlobFetchUtil, BlobFetchUtil>();
     }
 }
