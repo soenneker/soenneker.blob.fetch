@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\src\Soenneker.Blob.Fetch.csproj" />
+        <ProjectReference Include="..\..\src\Soenneker.Blob.Fetch.csproj" />
     </ItemGroup>
 
 </Project>
