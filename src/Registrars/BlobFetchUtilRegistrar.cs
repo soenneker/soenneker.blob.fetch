@@ -12,16 +12,16 @@ public static class BlobFetchUtilRegistrar
 {
     public static IServiceCollection AddBlobFetchUtilAsSingleton(this IServiceCollection services)
     {
-        services.AddBlobContainerUtilAsSingleton();
-        services.TryAddSingleton<IBlobFetchUtil, BlobFetchUtil>();
+        services.AddBlobContainerUtilAsSingleton()
+                .TryAddSingleton<IBlobFetchUtil, BlobFetchUtil>();
 
         return services;
     }
 
     public static IServiceCollection AddBlobFetchUtilAsScoped(this IServiceCollection services)
     {
-        services.AddBlobContainerUtilAsSingleton();
-        services.TryAddScoped<IBlobFetchUtil, BlobFetchUtil>();
+        services.AddBlobContainerUtilAsSingleton()
+                .TryAddScoped<IBlobFetchUtil, BlobFetchUtil>();
 
         return services;
     }
