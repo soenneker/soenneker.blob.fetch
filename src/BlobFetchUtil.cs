@@ -11,7 +11,7 @@ using Soenneker.Extensions.ValueTask;
 namespace Soenneker.Blob.Fetch;
 
 ///<inheritdoc cref="IBlobFetchUtil"/>
-public class BlobFetchUtil : IBlobFetchUtil
+public sealed class BlobFetchUtil : IBlobFetchUtil
 {
     private readonly ILogger<BlobFetchUtil> _logger;
     private readonly IBlobContainerUtil _blobContainerUtil;
