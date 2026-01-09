@@ -26,11 +26,18 @@ public sealed class BlobFetchUtil : IBlobFetchUtil
     {
         _logger.LogDebug("Getting all blob items from container ({container}) with prefix ({prefix})...", blobContainer, prefix);
 
-        BlobContainerClient container = await _blobContainerUtil.Get(blobContainer, cancellationToken: cancellationToken).NoSync();
+        BlobContainerClient container = await _blobContainerUtil.Get(blobContainer, cancellationToken: cancellationToken)
+                                                                .NoSync();
 
         var blobItems = new List<BlobItem>();
 
-        await foreach (BlobItem blobItem in container.GetBlobsAsync(prefix: prefix, cancellationToken: cancellationToken).ConfigureAwait(false))
+        var blobGetOptions = new GetBlobsOptions
+        {
+            Prefix = prefix
+        };
+
+        await foreach (BlobItem blobItem in container.GetBlobsAsync(blobGetOptions, cancellationToken: cancellationToken)
+                                                     .ConfigureAwait(false))
         {
             blobItems.Add(blobItem);
         }
