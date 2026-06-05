@@ -10,6 +10,11 @@ namespace Soenneker.Blob.Fetch.Registrars;
 /// </summary>
 public static class BlobFetchUtilRegistrar
 {
+    /// <summary>
+    /// Adds blob fetch util as singleton.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The result of the operation.</returns>
     public static IServiceCollection AddBlobFetchUtilAsSingleton(this IServiceCollection services)
     {
         services.AddBlobContainerUtilAsSingleton().TryAddSingleton<IBlobFetchUtil, BlobFetchUtil>();
@@ -17,6 +22,11 @@ public static class BlobFetchUtilRegistrar
         return services;
     }
 
+    /// <summary>
+    /// Adds blob fetch util as scoped.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <returns>The result of the operation.</returns>
     public static IServiceCollection AddBlobFetchUtilAsScoped(this IServiceCollection services)
     {
         services.AddBlobContainerUtilAsSingleton().TryAddScoped<IBlobFetchUtil, BlobFetchUtil>();
