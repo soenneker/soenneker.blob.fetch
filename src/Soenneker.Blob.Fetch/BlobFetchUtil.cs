@@ -10,7 +10,7 @@ using Soenneker.Extensions.ValueTask;
 
 namespace Soenneker.Blob.Fetch;
 
-///<inheritdoc cref="IBlobFetchUtil"/>
+/// <inheritdoc cref="IBlobFetchUtil"/>
 public sealed class BlobFetchUtil : IBlobFetchUtil
 {
     private readonly ILogger<BlobFetchUtil> _logger;
