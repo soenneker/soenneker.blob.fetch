@@ -5,39 +5,74 @@
 
 # Soenneker.Blob.Fetch
 
-A utility library for Azure Blob fetch (metadata) operations.
+Lists Azure Blob Storage items and their metadata, optionally filtered by a blob-name prefix.
 
-## Install
+## Installation
 
 ```bash
 dotnet add package Soenneker.Blob.Fetch
 ```
 
-## Quick start
+## Configuration
 
-```csharp
-using Soenneker.Blob.Fetch.Registrars;
-using Microsoft.Extensions.DependencyInjection;
+Provide the Azure Storage connection string through configuration:
 
-var services = new ServiceCollection();
-var result = services.AddBlobFetchUtilAsSingleton();
+```json
+{
+  "Azure": {
+    "Storage": {
+      "Blob": {
+        "ConnectionString": "<connection string>"
+      }
+    }
+  }
+}
 ```
 
-Registers Blob Fetch Util with a singleton lifetime.
+## Registration
 
-## What you get
+```csharp
+using Microsoft.Extensions.DependencyInjection;
+using Soenneker.Blob.Fetch.Registrars;
 
-- `IBlobFetchUtil` — A utility library for Azure Blob fetch (metadata) operations.
-- `BlobFetchUtilRegistrar` — A utility library for Azure Blob storage fetch operations.
+services.AddBlobFetchUtilAsSingleton();
+```
 
-## API at a glance
+Use `AddBlobFetchUtilAsScoped()` when the consuming service should be scoped.
 
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `IBlobFetchUtil.GetAllBlobItems(blobContainer, prefix, cancellationToken)` | Doesn't download blobs, just grabs the metadata or reference to it. DON'T use this to download a blob; use BlobDownloadUtil instead. Typically Scoped IoC. | Blob metadata and references only; blob content is not downloaded. |
-| `BlobFetchUtilRegistrar.AddBlobFetchUtilAsSingleton(services)` | Registers Blob Fetch Util with a singleton lifetime. | The same service collection, so additional registrations can be chained. |
-| `BlobFetchUtilRegistrar.AddBlobFetchUtilAsScoped(services)` | Registers Blob Fetch Util with a scoped lifetime. | The same service collection, so additional registrations can be chained. |
+## Usage
 
-## Practical notes
+```csharp
+using Azure.Storage.Blobs.Models;
+using Soenneker.Blob.Fetch.Abstract;
 
-- Cancellation stops pending work; it does not undo work that has already completed.
+public sealed class ExportCatalog
+{
+    private readonly IBlobFetchUtil _fetch;
+
+    public ExportCatalog(IBlobFetchUtil fetch)
+    {
+        _fetch = fetch;
+    }
+
+    public async ValueTask<IReadOnlyList<BlobItem>> ListCsvExports(
+        CancellationToken cancellationToken)
+    {
+        return await _fetch.GetAllBlobItems(
+            "exports",
+            prefix: "daily/",
+            cancellationToken);
+    }
+}
+```
+
+Each returned `BlobItem` describes a blob. The blob content is not downloaded.
+
+## Behavior
+
+- `prefix` is a blob-name prefix, not a wildcard or regular expression. For example, `daily/` matches blobs stored beneath that virtual path.
+- Azure may retrieve the listing in multiple service pages, but this library collects every result into one `List<BlobItem>` before returning.
+- Because the complete result is held in memory, use Azure's pageable APIs directly when listing a very large or untrusted container.
+- The underlying container utility creates a missing container before listing it. An empty result can therefore mean either an existing empty container or a newly created one.
+- Blob content and optional metadata fields that were not requested by the underlying Azure listing are not fetched.
+- Cancellation is observed while retrieving listing pages.

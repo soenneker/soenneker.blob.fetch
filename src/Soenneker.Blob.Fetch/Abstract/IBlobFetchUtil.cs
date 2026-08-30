@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs.Models;
@@ -7,19 +6,16 @@ using Azure.Storage.Blobs.Models;
 namespace Soenneker.Blob.Fetch.Abstract;
 
 /// <summary>
-/// A utility library for Azure Blob fetch (metadata) operations
+/// Lists blob metadata from Azure Blob Storage containers.
 /// </summary>
 public interface IBlobFetchUtil
 {
     /// <summary>
-    /// Doesn't download blobs, just grabs the metadata or reference to it. <para/>
-    /// DON'T use this to download a blob; use BlobDownloadUtil instead. <para/>
-    /// Typically Scoped IoC
+    /// Lists every blob whose name begins with an optional prefix.
     /// </summary>
-    /// <param name="blobContainer">Blob Container for the get all blob items operation.</param>
-    /// <param name="prefix">Prefix prepended to generated keys or names.</param>
+    /// <param name="blobContainer">Name of the blob container.</param>
+    /// <param name="prefix">Optional case-sensitive blob name prefix.</param>
     /// <param name="cancellationToken">Token used to cancel the operation.</param>
-    /// <returns>A task whose result is the collection returned by get All Blob Items.</returns>
-    [Pure]
+    /// <returns>All matching blob items. Blob content is not downloaded.</returns>
     ValueTask<List<BlobItem>> GetAllBlobItems(string blobContainer, string? prefix = null, CancellationToken cancellationToken = default);
 }
