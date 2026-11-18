@@ -24,7 +24,8 @@ public sealed class BlobFetchUtil : IBlobFetchUtil
 
     public async ValueTask<List<BlobItem>> GetAllBlobItems(string blobContainer, string? prefix = null, CancellationToken cancellationToken = default)
     {
-        _logger.LogDebug("Getting all blob items from container ({container}) with prefix ({prefix})...", blobContainer, prefix);
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Getting all blob items from container ({container}) with prefix ({prefix})...", blobContainer, prefix);
 
         BlobContainerClient container = await _blobContainerUtil.Get(blobContainer, cancellationToken: cancellationToken)
                                                                 .NoSync();
@@ -42,7 +43,8 @@ public sealed class BlobFetchUtil : IBlobFetchUtil
             blobItems.Add(blobItem);
         }
 
-        _logger.LogDebug("Completed getting all blob items in container ({container}) with prefix ({prefix})", blobContainer, prefix);
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Completed getting all blob items in container ({container}) with prefix ({prefix})", blobContainer, prefix);
 
         return blobItems;
     }
